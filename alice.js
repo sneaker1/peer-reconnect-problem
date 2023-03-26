@@ -6,6 +6,8 @@ import {gossipsub} from "@chainsafe/libp2p-gossipsub"
 import {mplex} from "@libp2p/mplex"
 import {tcp} from "@libp2p/tcp"
 import {pubsubPeerDiscovery} from "@libp2p/pubsub-peer-discovery"
+import { circuitRelayTransport } from "libp2p/circuit-relay"
+import { multiaddr } from '@multiformats/multiaddr'
 
 async function start() {
   const peerId = {
@@ -19,19 +21,22 @@ async function start() {
       peerId: await createFromJSON(peerId),
       addresses: {
         listen: [
-          "/ip4/0.0.0.0/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
-          "/ip4/0.0.0.0/tcp/5002/ws/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
+          //"/ip4/0.0.0.0/tcp/5001",
+          //"/ip4/0.0.0.0/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/",
+          //"/ip4/0.0.0.0/tcp/5002/ws/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
+          "/ip4/89.58.0.139/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit"
         ],
       },
       pubsub: gossipsub({
         allowPublishToZeroPeers: true,
       }),
-      transports: [tcp()],
-      // transports: [tcp({
-      //   outboundSocketInactivityTimeout: 0,
-      //   inboundSocketInactivityTimeout: 0
-      // })],
-      //transports: [webSockets()],
+      //transports: [tcp()],
+      transports: [
+        tcp(),
+        circuitRelayTransport({
+          //discoverRelays: 1
+        })
+      ],
       connectionEncryption: [noise()],
       streamMuxers: [mplex()],
       peerDiscovery: [
@@ -40,14 +45,14 @@ async function start() {
           interval: 1000,
         }),
       ],
-      relay: {
-        // Circuit Relay options (this config is part of libp2p core configurations)
-        enabled: true, // Allows you to dial and accept relayed connections. Does not make you a relay.
-        autoRelay: {
-          enabled: true,
-          maxListeners: 2,
-        },
-      }
+      // relay: {
+      //   // Circuit Relay options (this config is part of libp2p core configurations)
+      //   enabled: true, // Allows you to dial and accept relayed connections. Does not make you a relay.
+      //   autoRelay: {
+      //     enabled: true,
+      //     maxListeners: 2,
+      //   },
+      // }
     })
 
     let connected = false
@@ -78,6 +83,9 @@ async function start() {
       libp2p.getMultiaddrs().map((it) => it.toString()),
     )
     console.log("----------------------------------------------")
+
+    //var c = await libp2p.dial(multiaddr("/ip4/89.58.0.139/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p"));
+    //console.log(c);
 
     return libp2p
   } catch (err) {

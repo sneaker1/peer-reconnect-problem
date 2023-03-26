@@ -7,6 +7,7 @@ import {gossipsub} from "@chainsafe/libp2p-gossipsub"
 import {mplex} from "@libp2p/mplex"
 import {tcp} from "@libp2p/tcp"
 import {pubsubPeerDiscovery} from "@libp2p/pubsub-peer-discovery"
+import { circuitRelayServer, circuitRelayTransport } from "libp2p/circuit-relay"
 
 async function start() {
   const peerId = {
@@ -21,7 +22,7 @@ async function start() {
       addresses: {
         listen: [
           "/ip4/0.0.0.0/tcp/5001",
-          "/ip4/0.0.0.0/tcp/5002/ws",
+          //"/ip4/0.0.0.0/tcp/5002/ws",
         ],
         announce: [
           "/ip4/0.0.0.0/tcp/5001",
@@ -31,12 +32,13 @@ async function start() {
       pubsub: gossipsub({
         allowPublishToZeroPeers: true,
       }),
-      transports: [tcp()],
-      // transports: [tcp({
-      //   outboundSocketInactivityTimeout: 0,
-      //   inboundSocketInactivityTimeout: 0
-      // })],
-      //transports: [webSockets()],
+      transports: [
+        tcp(),
+        circuitRelayTransport({
+          //discoverRelays: 1
+        })
+      ],
+
       connectionEncryption: [noise()],
       streamMuxers: [mplex()],
       peerDiscovery: [
@@ -45,23 +47,21 @@ async function start() {
           interval: 1000,
         }),
       ],
-      relay: {
-        // Circuit Relay options (this config is part of libp2p core configurations)
-        enabled: true, // Allows you to dial and accept relayed connections. Does not make you a relay.
-        hop: {
-          enabled: true, // Allows you to be a relay for other peers
-          active: true, // You will attempt to dial destination peers if you are not connected to them
-        },
+      relay: circuitRelayServer({
+        hopTimeout: 30 * 1000, // incoming relay requests must be resolved within this time limit
         advertise: {
-          bootDelay: 15 * 60 * 1000, // Delay before HOP relay service is advertised on the network
-          enabled: true, // Allows you to disable the advertise of the Hop service
-          ttl: 30 * 60 * 1000, // Delay Between HOP relay service advertisements on the network
+          bootDelay: 15 * 60 * 1000
         },
-        autoRelay: {
-          enabled: true, // Allows you to bind to relays with HOP enabled for improving node dialability
-          maxListeners: 2, // Configure maximum number of HOP relays to use
-        },
-      },
+        reservations: {
+          //maxReservations: 15, // how many peers are allowed to reserve relay slots on this server
+          //reservationClearInterval: 300 * 1000, // how often to reclaim stale reservations
+          //applyDefaultLimit: true, // whether to apply default data/duration limits to each relayed connection
+          defaultDurationLimit: 1.5 * 60 * 1000, // the default maximum amount of time a relayed connection can be open for
+          //defaultDataLimit: BigInt(2 << 7), // the default maximum number of bytes that can be transferred over a relayed connection
+          maxInboundHopStreams: 32, // how many inbound HOP streams are allow simultaneously
+          maxOutboundHopStreams: 64, // how many outbound HOP streams are allow simultaneously
+        }
+      })
     })
 
     // Listen for new connections to peers
