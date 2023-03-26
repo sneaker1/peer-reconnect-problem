@@ -23,7 +23,7 @@ async function start() {
         listen: [
           //"/ip4/0.0.0.0/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
           //"/ip4/0.0.0.0/tcp/5002/ws/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
-          //"/ip4/89.58.0.139/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit"
+          "/ip4/89.58.0.139/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit"
         ],
       },
       pubsub: gossipsub({
@@ -78,9 +78,9 @@ async function start() {
         libp2p.getMultiaddrs().map((it) => it.toString()),
     )
     console.log("----------------------------------------------")
-    console.log(libp2p);
-    var c = await libp2p.dial(multiaddr("/ip4/89.58.0.139/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit/p2p/12D3KooWLV3w42LqUb9MWE7oTzG7vwaFjPw9GvDqmsuDif5chTn9"));
-    console.log(c);
+    //console.log(libp2p);
+    //var c = await libp2p.dial(multiaddr("/ip4/89.58.0.139/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit/p2p/12D3KooWLV3w42LqUb9MWE7oTzG7vwaFjPw9GvDqmsuDif5chTn9"));
+    //console.log(c);
 
     return libp2p
   } catch (err) {
