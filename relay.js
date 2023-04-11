@@ -49,17 +49,18 @@ async function start() {
       ],
       relay: circuitRelayServer({
         hopTimeout: 30 * 1000, // incoming relay requests must be resolved within this time limit
-        advertise: {
-          bootDelay: 15 * 60 * 1000
-        },
+        //advertise: {
+        //  bootDelay: 15 * 60 * 1000
+        //},
         reservations: {
-          //maxReservations: 15, // how many peers are allowed to reserve relay slots on this server
+          maxReservations: 15, // how many peers are allowed to reserve relay slots on this server
           //reservationClearInterval: 300 * 1000, // how often to reclaim stale reservations
           //applyDefaultLimit: true, // whether to apply default data/duration limits to each relayed connection
-          defaultDurationLimit: 1.5 * 60 * 1000, // the default maximum amount of time a relayed connection can be open for
+          //defaultDurationLimit: 1.0 * 60 * 1000, // the default maximum amount of time a relayed connection can be open for
+          //defaultDurationLimit: 60,
           //defaultDataLimit: BigInt(2 << 7), // the default maximum number of bytes that can be transferred over a relayed connection
-          maxInboundHopStreams: 32, // how many inbound HOP streams are allow simultaneously
-          maxOutboundHopStreams: 64, // how many outbound HOP streams are allow simultaneously
+          //maxInboundHopStreams: 32, // how many inbound HOP streams are allow simultaneously
+          //maxOutboundHopStreams: 64, // how many outbound HOP streams are allow simultaneously
         }
       })
     })

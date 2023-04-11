@@ -1,5 +1,17 @@
 ## Libp2p peer reconnect problem
 
+WORKING WITH CIRCUIT-V2 SINCE V0.43.0
+BY DEFAULT IT STILL DISCONNECTS AFTER 2 MINUTES.
+THIS CAN BE PREVENTED BY SETTING THE defaultDurationLimit OF THE RELAY TO SOMETHING HIGH LIKE 2 HOURS
+
+```shell
+relay: circuitRelayServer({
+  reservations: {
+    defaultDurationLimit: 1 * 60 * 1000,
+  }
+})
+```
+
 ### Reproduction
 
 1. `npm i`

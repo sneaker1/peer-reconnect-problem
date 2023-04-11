@@ -16,43 +16,31 @@ async function start() {
       "CAESYI44p8HiCHtCBhuUcetU9XdIEtWvon15a5ZLsfyssSj9nn3mt4oZI0t6wXTHOvIA0GSFWrYkdKp1338oFIambdKefea3ihkjS3rBdMc68gDQZIVatiR0qnXffygUhqZt0g==",
     pubKey: "CAESIJ595reKGSNLesF0xzryANBkhVq2JHSqdd9/KBSGpm3S",
   }
-  try {
+  //try {
     const libp2p = await createLibp2p({
       peerId: await createFromJSON(peerId),
       addresses: {
         listen: [
-          //"/ip4/0.0.0.0/tcp/5001",
-          //"/ip4/0.0.0.0/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/",
-          //"/ip4/0.0.0.0/tcp/5002/ws/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
-          "/ip4/89.58.0.139/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit"
+          "/ip4/0.0.0.0/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
         ],
       },
       pubsub: gossipsub({
         allowPublishToZeroPeers: true,
       }),
-      //transports: [tcp()],
-      transports: [
-        tcp(),
-        circuitRelayTransport({
-          //discoverRelays: 1
-        })
-      ],
-      connectionEncryption: [noise()],
-      streamMuxers: [mplex()],
       peerDiscovery: [
         // @ts-ignore package has broken typings
         pubsubPeerDiscovery({
           interval: 1000,
         }),
       ],
-      // relay: {
-      //   // Circuit Relay options (this config is part of libp2p core configurations)
-      //   enabled: true, // Allows you to dial and accept relayed connections. Does not make you a relay.
-      //   autoRelay: {
-      //     enabled: true,
-      //     maxListeners: 2,
-      //   },
-      // }
+      transports: [
+        tcp(),
+        circuitRelayTransport({
+          discoverRelays: 1,
+        })
+      ],
+      connectionEncryption: [noise()],
+      streamMuxers: [mplex()],
     })
 
     let connected = false
@@ -75,8 +63,12 @@ async function start() {
       connected = false
     })
 
-    await libp2p.start()
+    libp2p.connectionManager.addEventListener("peer:discovery", (evt) => {
+      console.log("Discovered: " + connection.remotePeer.toString());
+    });
+
     console.log("----------------------------------------------")
+    await libp2p.start()
     console.log("PeerId:", libp2p.peerId.toString())
     console.log(
       "Listening on:",
@@ -88,9 +80,9 @@ async function start() {
     //console.log(c);
 
     return libp2p
-  } catch (err) {
-    console.error(err)
-  }
+  // } catch (err) {
+  //   console.error(err)
+  // }
 }
 
-start()
+var mylibp2p = start()

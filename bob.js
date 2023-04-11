@@ -21,14 +21,10 @@ async function start() {
       peerId: await createFromJSON(peerId),
       addresses: {
         listen: [
-          //"/ip4/0.0.0.0/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
-          //"/ip4/0.0.0.0/tcp/5002/ws/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
-          "/ip4/89.58.0.139/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit"
+          "/ip4/0.0.0.0/tcp/5001/p2p/12D3KooWNvSZnPi3RrhrTwEY4LuuBeB6K6facKUCJcyWG1aoDd2p/p2p-circuit",
         ],
       },
-      pubsub: gossipsub({
-        allowPublishToZeroPeers: true,
-      }),
+
       //transports: [tcp()],
       transports: [
         tcp(),
@@ -44,6 +40,9 @@ async function start() {
           interval: 1000,
         }),
       ],
+      pubsub: gossipsub({
+        allowPublishToZeroPeers: true,
+      }),
       // relay: {
       //   // Circuit Relay options (this config is part of libp2p core configurations)
       //   enabled: true, // Allows you to dial and accept relayed connections. Does not make you a relay.
