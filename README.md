@@ -1,8 +1,12 @@
 ## Libp2p peer reconnect problem
 
-WORKING WITH CIRCUIT-V2 SINCE V0.43.0
-BY DEFAULT IT STILL DISCONNECTS AFTER 2 MINUTES.
-THIS CAN BE PREVENTED BY SETTING THE defaultDurationLimit OF THE RELAY TO SOMETHING HIGH LIKE 2 HOURS
+<strong>
+This is now working with circuit-v2 since libp2p v0.43.0  
+
+
+</strong>
+
+
 
 ```shell
 relay: circuitRelayServer({
